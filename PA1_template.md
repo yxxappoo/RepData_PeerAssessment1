@@ -21,7 +21,7 @@ activity$date <- as.Date(activity$date)
 ```r
 library(ggplot2)
 totalstep <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
-qplot(totalstep, xlab = "daily number of steps", binwidth=500)
+hist(totalstep, main="total steps taken per day", xlab="steps taken", breaks = 10)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -37,6 +37,7 @@ The median of the total number of steps taken per day is 1.0395\times 10^{4}
 
 
 ## What is the average daily activity pattern?
+### Make a time series plot 
 
 ```r
 averagestep <- tapply(activity$steps, activity$interval, mean, na.rm=TRUE)
@@ -44,6 +45,13 @@ plot(names(averagestep), averagestep, type = "l", xlab="interval", ylab="average
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps
+
+```r
+maxstep <- names(which.max(averagestep))
+```
+The 5-minute interval that has the maximum number of steps is 835.
 
 
 ## Imputing missing values
@@ -75,10 +83,10 @@ library(ggplot2)
 totalstep_complete <- tapply(activity_complete$steps, activity_complete$date, sum, na.rm=TRUE)
 mean_step_complete <- mean(totalstep_complete)
 median_step_complete <- median(totalstep_complete)
-qplot(totalstep_complete, xlab = "daily number of steps", binwidth=500)
+hist(totalstep_complete, main="total steps taken per day", xlab="steps taken", breaks = 10)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 The mean of the total number of steps taken per day is 1.0766189\times 10^{4}.
 The median of the total number of steps taken per day is 1.0765\times 10^{4}.
@@ -123,6 +131,8 @@ library(lattice)
 xyplot(average~Intervals|days, data=averageall, type="l", xlab="Interval", ylab="Number of steps", layout=c(1,2))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+As is shown in the figure, there is a difference in the pattern between weekdays and weekends. During weekdays, the peak is to the front. During weekends, the peak is throughtout the intervals.
 
 
