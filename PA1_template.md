@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 activity <- read.csv("activity.csv")
 activity$steps <- as.numeric(activity$steps)
 activity$date <- as.Date(activity$date)
@@ -16,49 +17,60 @@ activity$date <- as.Date(activity$date)
 
 ## What is mean total number of steps taken per day?
 ### Calculate the total steps per day and plot it onto a histgram
-```{r}
+
+```r
 library(ggplot2)
 totalstep <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
 qplot(totalstep, xlab = "daily number of steps", binwidth=500)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
 ### Calculate the mean and median of the total steps per day
-```{r}
+
+```r
 mean_step <- mean(totalstep)
 median_step <- median(totalstep)
 ```
-The mean of the total number of steps taken per day is `r mean_step`.
-The median of the total number of steps taken per day is `r median_step`
+The mean of the total number of steps taken per day is 9354.2295082.
+The median of the total number of steps taken per day is 1.0395\times 10^{4}
 
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 averagestep <- tapply(activity$steps, activity$interval, mean, na.rm=TRUE)
 plot(names(averagestep), averagestep, type = "l", xlab="interval", ylab="average steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 
 ## Imputing missing values
 ### Calculate and report the total number of missing values in the dataset
-```{r}
+
+```r
 missing <- sum(is.na(activity$steps))
 ```
-The total number of missing values in the dataset is `r missing`.
+The total number of missing values in the dataset is 2304.
 
 ### Devise a strategy for filling in all of the missing values in the dataset
-```{r}
+
+```r
 activity$replacesteps <- activity[match(names(averagestep), activity$interval),3]
 missing_activity <- data.frame(date=activity$date[is.na(activity$steps)], interval=activity$interval[is.na(activity$steps)], steps=activity$replacesteps[is.na(activity$steps)])
 ```
 
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in
-```{r}
+
+```r
 activity_complete <- activity[complete.cases(activity),]
 activity_replace <- rbind(activity_complete[,1:3], missing_activity)
 ```
 
 ### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
-```{r}
+
+```r
 library(ggplot2)
 totalstep_complete <- tapply(activity_complete$steps, activity_complete$date, sum, na.rm=TRUE)
 mean_step_complete <- mean(totalstep_complete)
@@ -66,14 +78,17 @@ median_step_complete <- median(totalstep_complete)
 qplot(totalstep_complete, xlab = "daily number of steps", binwidth=500)
 ```
 
-The mean of the total number of steps taken per day is `r mean_step_complete`.
-The median of the total number of steps taken per day is `r median_step_complete`.
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+The mean of the total number of steps taken per day is 1.0766189\times 10^{4}.
+The median of the total number of steps taken per day is 1.0765\times 10^{4}.
 The mean and median from the replacing data are close to the original mean and median, but it's not identical. That's because we replace the NA with the average steps for each interval throughout days.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ###Create a new factor variable in the dataset with two levels – “weekday” and “weekend”
-```{r}
+
+```r
 checkdays <- function(x){
     if(x %in% c("Saturday", "Sunday")){
         return("Weekend")
@@ -89,7 +104,8 @@ activity$week <- as.character(activity$week)
 ```
 
 ### Make a panel plot containing a time series plot
-```{r}
+
+```r
 average_step_week <- tapply(activity$steps, list(activity$interval, activity$week), mean, na.rm=TRUE)
 
 average_weekday <- as.data.frame(average_step_week[,1])
@@ -106,5 +122,7 @@ averageall <- rbind(average_weekday, average_weekend)
 library(lattice)
 xyplot(average~Intervals|days, data=averageall, type="l", xlab="Interval", ylab="Number of steps", layout=c(1,2))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 
